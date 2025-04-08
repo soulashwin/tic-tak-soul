@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    alert  {
+        background-color: #bf0c1b;
+        color: #a30817;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        display: none;
+    }
+
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      width: 90vw;
+      max-width: 400px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .cell {
+      background-color: white;
+      border: 2px solid #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s;
+    }
+
+    .cell:hover {
+      background-color: #ddd;
+    }
+
+    .status {
+      margin: 20px 0;
+      font-size: 1.5rem;
+    }
+
+    .restart {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .restart:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="status" id="status">Player X's turn</div>
+    <div class="board" id="board"></div>
+    <button class="restart"  onclick="restartGame()">Restart</button>
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    const statusText = document.getElementById('status');
+    let currentPlayer = 'X';
+    let cells = Array(9).fill(null);
+    let gameOver = false;
+
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    function createBoard() {
+      board.innerHTML = '';
+      cells.forEach((_, i) => {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', handleMove);
+        board.appendChild(cell);
+      });
+    }
+
+    function handleMove(e) {
+      const index = e.target.dataset.index;
+      if (cells[index] || gameOver) return;
+
+      cells[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      if (checkWinner()) {
+        statusText.textContent = `Player ${currentPlayer} wins!`;
+        gameOver = true;
+      } else if (cells.every(cell => cell)) {
+        statusText.textContent = "It's a draw!";
+        gameOver = true;
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusText.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWinner() {
+      return winningCombinations.some(combination => {
+        const [a, b, c] = combination;
+        return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+      });
+    }
+
+    function restartGame() {
+      cells = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameOver = false;
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+      createBoard();
+      alert("Game restarted!");
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
